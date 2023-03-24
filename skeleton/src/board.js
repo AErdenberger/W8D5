@@ -90,7 +90,31 @@ Board.prototype.isOccupied = function (pos) {
  * Returns empty array if no pieces of the opposite color are found.
  */
 Board.prototype._positionsToFlip = function(pos, color, dir, piecesToFlip){
+
+  if (piecesToFlip === undefined) {
+    piecesToFlip = [];
+  }
+
+  let nextPos = this.nextPos(pos, dir);
+
+  // end if current pos is not valid
+  if (!this.isValidPos(nextPos)) {
+    return [];
+  // 
+  } else if(!this.isOccupied(nextPos)) {
+    return [];
+  // takes care of landing on your own color (ends)
+  } else if (this.isMine(nextPos, color)) {
+      return piecesToFlip;
+  // takes care of landing on an empty space (ends it)
+  } else {
+    piecesToFlip.push(nextPos);
+    return this._positionsToFlip(nextPos, color, dir, piecesToFlip);
+  };
+};
   
+Board.prototype.nextPos = function (pos, dir) {
+  return [(pos[0] + dir[0]),(pos[1] + dir[1])];
 };
 
 /**
