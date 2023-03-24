@@ -123,7 +123,21 @@ Board.prototype.nextPos = function (pos, dir) {
  * color being flipped.
  */
 Board.prototype.validMove = function (pos, color) {
-};
+  let valid = false;
+  
+  if (this.isOccupied(pos)){
+    return valid;
+  } else {
+    Board.DIRS.forEach(element => {
+      let flippy = this._positionsToFlip(pos, color, element)
+      if (flippy.length > 0){
+        valid = true;
+        return valid;
+      };
+    });
+    return valid;
+  };
+}
 
 /**
  * Adds a new piece of the given color to the given position, flipping the
@@ -132,6 +146,18 @@ Board.prototype.validMove = function (pos, color) {
  * Throws an error if the position represents an invalid move.
  */
 Board.prototype.placePiece = function (pos, color) {
+  let that = this;
+  if (this.validMove(pos, color)){
+    this.grid[pos[0]][pos[1]] = new Piece(color);
+    Board.DIRS.forEach(element => {
+      let flippings = that._positionsToFlip(pos, color, element);
+      flippings.forEach(element => {
+        this.getPiece(element).flip();
+      });
+    });
+  } else {
+    throw new Error("Invalid move!");
+  };
 };
 
 /**
